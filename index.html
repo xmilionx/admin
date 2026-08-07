@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Admin</title>
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Admin">
+<meta name="application-name" content="Admin">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --silver:#C0C8D8;
+  --silver-dim:#7a8296;
+  --border:rgba(255,255,255,.10);
+  --line:rgba(255,255,255,.06);
+  --dim:rgba(255,255,255,.5);
+  --gold:#FFD700;
+  --red:#ff4d4d;
+  --green:#16a34a;
+  --r:10px;
+  --card-bg:radial-gradient(ellipse 110% 75% at 0% 0%,#0f2547 0%,transparent 55%),radial-gradient(ellipse 110% 75% at 100% 100%,#0f2547 0%,transparent 55%),#000;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:#000;font-family:'Inter',sans-serif;color:#fff;min-height:100vh}
+button,select,input,textarea{font-family:'Inter',sans-serif}
+button,select{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+
+#gate{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px}
+#gate.off{display:none}
+.gate-title{font-size:22px;font-weight:900;letter-spacing:3px;color:#fff;text-align:center}
+.gate-title .gold{color:var(--gold)}
+.gate-sub{font-size:11px;color:var(--silver-dim);letter-spacing:3px;margin-bottom:16px;font-weight:600}
+.gate-card{background:var(--card-bg);border:1.5px solid var(--silver);border-radius:14px;padding:26px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px}
+.gate-lbl{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.gate-err{font-size:12px;color:var(--red);font-weight:600;text-align:center;min-height:16px}
+.gate-btn{width:100%;height:46px;border:1.5px solid var(--silver);border-radius:var(--r);background:transparent;color:#fff;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:.15s}
+.gate-btn:hover{background:rgba(255,255,255,.05)}
+.gate-btn:active{transform:scale(.98)}
+.pw-wrap{position:relative}
+.pw-in{width:100%;height:46px;padding:0 44px 0 14px;background:#000;border:1.5px solid var(--silver);border-radius:var(--r);color:#fff;font-size:14px;outline:none;transition:.2s}
+.pw-in:focus{border-color:#fff}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--dim);cursor:pointer;font-size:14px}
+.pw-eye:hover{color:#fff}
+
+#admin{display:none;min-height:100vh;flex-direction:column}
+#admin.on{display:flex}
+.a-body{padding:16px 14px 40px;max-width:800px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:14px}
+
+.stat-panel{background:linear-gradient(135deg,#0a1f4a 0%,#000 50%,#0a1f4a 100%);border:1.5px solid var(--silver);border-radius:var(--r);padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-cell{display:flex;flex-direction:column;gap:3px;padding:8px 10px;background:rgba(0,0,0,.3);border:1.5px solid var(--silver);border-radius:8px}
+.stat-cell-lbl{font-size:9px;font-weight:600;color:var(--dim);letter-spacing:.3px}
+.stat-cell-val{font-size:16px;font-weight:800;color:#fff}
+
+.nav-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nav-btn{aspect-ratio:1.3/1;border:1.5px solid var(--silver);border-radius:var(--r);background:var(--card-bg);color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:.15s;padding:16px}
+.nav-btn:hover,.nav-btn.on{border-color:#fff}
+.nav-btn:active{transform:scale(.99)}
+.nav-btn i{font-size:24px;color:var(--silver)}
+.nav-btn span{font-size:12px;font-weight:700;letter-spacing:1px}
+
+.main-btn{height:52px;border:1.5px solid var(--silver);border-radius:4px;background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;transition:.15s;padding:0 20px;width:100%}
+.main-btn:hover{border-color:#fff}
+.main-btn:active{transform:scale(.99)}
+.main-btn i{font-size:18px;color:var(--silver)}
+.main-btn span{font-size:12px;font-weight:700;letter-spacing:1px}
+.main-btn.open{border-color:var(--green)}
+.main-btn.open i,.main-btn.open span{color:var(--green)}
+.main-btn.shut{border-color:#dc2626}
+.main-btn.shut i,.main-btn.shut span{color:#dc2626}
+
+.field-in{width:100%;height:38px;padding:0 14px;background:#000;border:1.5px solid var(--silver);border-radius:4px;color:#fff;font-size:13px;outline:none;transition:.2s}
+.field-in:focus{border-color:#fff}
+.field-in::placeholder{color:var(--dim)}
+
+.section{display:none;position:fixed;inset:0;z-index:100;background:#000;flex-direction:column;overflow-y:auto}
+.section.on{display:flex}
+.sec-hdr{position:sticky;top:0;background:rgba(0,0,0,.96);backdrop-filter:blur(12px);z-index:5;padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.sec-back{width:38px;height:38px;border-radius:4px;border:1.5px solid var(--silver);background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:.15s}
+.sec-back:hover{border-color:#fff}
+.sec-title{font-size:14px;font-weight:700;letter-spacing:1px;color:#fff}
+.sec-body{flex:1;padding:16px 14px 40px;max-width:800px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:12px}
+.sec-hdr-actions{display:flex;align-items:center;gap:10px;margin-left:auto}
+.sec-search{position:relative;display:flex;align-items:center;flex:1;margin-left:6px}
+.search-icon{position:absolute;left:14px;color:var(--dim);font-size:13px;pointer-events:none}
+.search-in{width:100%;padding-left:36px}
+
+.filter-bar{display:flex;border-bottom:1px solid rgba(192,200,216,.15);margin-bottom:4px}
+.filter-btn{flex:1;height:38px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:-1px}
+.filter-btn.on{color:#fff;border-bottom-color:var(--silver)}
+.filter-btn:hover{color:#fff}
+.filter-cnt{font-size:10px;opacity:.6;font-weight:500}
+
+.user-row{background:var(--card-bg);border:1.5px solid var(--silver);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:3px;cursor:pointer;transition:.15s;margin-bottom:10px}
+.user-nm{font-size:13px;font-weight:700;color:#fff}
+.user-em{font-size:10px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.ud-card{background:var(--card-bg);border:1.5px solid var(--silver);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:8px}
+.ud-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#fff;padding:7px 0;border-bottom:1px solid var(--line);gap:8px}
+.ud-row:last-child{border-bottom:none}
+.ud-row-lbl{color:var(--dim);font-weight:500;flex-shrink:0}
+.ud-row-val{font-weight:700;text-align:right;word-break:break-all;flex:1}
+.ud-row-val.mono{font-family:monospace;letter-spacing:1px}
+.ud-edit-btn{width:28px;height:28px;border-radius:6px;border:1px solid rgba(192,200,216,.3);background:transparent;color:var(--dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:.12s;flex-shrink:0}
+.ud-edit-btn:hover{border-color:var(--silver);color:#fff}
+.ud-delete-btn{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--red);background:transparent;color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.15s;flex-shrink:0;margin-left:auto}
+.ud-delete-btn:hover{background:rgba(255,77,77,.12)}
+.ud-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ud-stat{background:var(--card-bg);border:1.5px solid var(--silver);border-radius:8px;padding:10px 12px}
+.ud-stat-lbl{font-size:9px;color:var(--dim);letter-spacing:.3px;font-weight:600}
+.ud-stat-val{font-size:14px;font-weight:800;color:#fff;margin-top:3px}
+.ud-note{font-size:10px;color:var(--dim);line-height:1.5;padding-top:2px}
+
+.edit-block{background:rgba(0,0,0,.3);border:1px solid rgba(192,200,216,.2);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.edit-title{font-size:10px;font-weight:600;color:var(--dim);letter-spacing:.3px}
+.edit-row{display:flex;gap:8px}
+.edit-in{flex:1;height:38px;padding:0 12px;background:#000;border:1.5px solid rgba(192,200,216,.35);border-radius:8px;color:#fff;font-size:12px;outline:none;transition:.2s}
+.edit-in:focus{border-color:var(--silver)}
+.edit-btn{height:38px;padding:0 14px;border:1.5px solid rgba(192,200,216,.35);border-radius:8px;background:transparent;color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:.15s;white-space:nowrap}
+.edit-btn:hover{border-color:var(--silver)}
+.edit-btn.gold{border-color:var(--silver);color:var(--silver)}
+.edit-btn.wide{width:100%}
+
+.wd-card{background:var(--card-bg);border:1px solid rgba(192,200,216,.25);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.wd-card-amt{font-size:14px;font-weight:800;color:#fff}
+.wd-card-eur{font-size:11px;color:var(--dim);font-weight:500;margin-left:4px}
+.wd-card-user{font-size:10px;color:var(--dim)}
+.wd-addr-row{display:flex;align-items:center;gap:6px}
+.wd-card-addr{font-size:10px;color:var(--dim);font-family:monospace;word-break:break-all;line-height:1.4;flex:1}
+.wd-btn-row{display:flex;gap:8px}
+.wd-approve-btn{flex:1;height:36px;border:1.5px solid var(--silver);border-radius:8px;background:transparent;color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:.15s}
+.wd-approve-btn:hover{background:rgba(255,255,255,.05)}
+.wd-reject-btn{flex:1;height:36px;border:1.5px solid var(--red);background:transparent;color:var(--red);border-radius:8px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:.15s}
+.wd-reject-btn:hover{background:rgba(255,77,77,.12)}
+.wd-copy-btn{height:28px;padding:0 10px;border:1px solid rgba(192,200,216,.35);border-radius:6px;background:transparent;color:var(--dim);font-size:10px;cursor:pointer;transition:.15s;flex-shrink:0;display:inline-flex;align-items:center;gap:4px}
+.wd-copy-btn:hover{border-color:var(--silver);color:#fff}
+.wd-tx-item{border-bottom:1px solid var(--line);padding:10px 0;display:flex;flex-direction:column;gap:4px}
+.wd-tx-item:last-child{border-bottom:none}
+.wd-tx-top{display:flex;align-items:center;justify-content:space-between}
+.wd-tx-amt{font-size:13px;font-weight:800;color:#fff}
+.wd-tx-sub{font-size:10px;color:var(--dim)}
+.wd-tx-status{font-size:10px;color:var(--dim)}
+.wd-tx-status.approved{color:var(--green)}
+.wd-tx-status.rejected{color:var(--red)}
+.wd-modal-totals{display:flex;gap:8px;margin-bottom:14px}
+.wd-modal-cell{flex:1;background:rgba(0,0,0,.4);border:1.5px solid var(--silver);border-radius:8px;padding:10px 12px}
+.wd-modal-cell-lbl{font-size:9px;color:var(--dim);font-weight:600;letter-spacing:.3px}
+.wd-modal-cell-val{font-size:16px;font-weight:800;color:#fff;margin-top:3px}
+.wd-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.wd-modal-name{font-size:13px;font-weight:800;color:#fff}
+
+.lock-card{background:var(--card-bg);border:1px solid rgba(192,200,216,.25);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
+.lock-btns{display:flex;gap:8px}
+.lock-btn{flex:1;height:38px;border-radius:8px;border:1.5px solid;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:.15s;background:transparent}
+.lock-btn.danger{border-color:var(--red);color:var(--red)}
+.lock-btn.danger:hover{background:rgba(255,77,77,.08)}
+.lock-btn.unlock{border-color:var(--silver);color:var(--silver)}
+.lock-btn.unlock:hover{background:rgba(192,200,216,.08)}
+
+.kyc-img{width:100%;border-radius:10px;margin-top:12px;border:1px solid rgba(192,200,216,.3);cursor:pointer;transition:opacity .15s}
+.kyc-img:active{opacity:.8}
+.kyc-selfies{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.kyc-selfies-img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;border:1px solid rgba(192,200,216,.3);cursor:pointer;display:block;transition:opacity .15s}
+.kyc-selfies-img:active{opacity:.8}
+.kyc-actions{display:flex;gap:8px;margin-top:14px}
+.kyc-approve-btn{flex:1;height:42px;border-radius:8px;border:1.5px solid var(--green);background:transparent;color:var(--green);font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
+.kyc-approve-btn:hover{background:rgba(22,163,74,.08)}
+.kyc-reject-btn{flex:1;height:42px;border-radius:8px;border:1.5px solid #dc2626;background:transparent;color:#dc2626;font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
+.kyc-reject-btn:hover{background:rgba(220,38,38,.08)}
+.kyc-info-card{background:var(--card-bg);border:1.5px solid var(--silver);border-radius:var(--r);overflow:hidden}
+.kyc-info-row{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid var(--line);font-size:12px}
+.kyc-info-row:last-child{border-bottom:none}
+.kyc-info-lbl{color:var(--dim);font-weight:500}
+.kyc-info-val{font-weight:700;color:#fff;text-align:right;max-width:60%}
+.kyc-status-note{text-align:center;padding:12px;color:var(--dim);font-size:12px}
+
+.rs-card{background:var(--card-bg);border:1.5px solid rgba(192,200,216,.35);border-radius:10px;padding:14px 14px 12px;margin-bottom:10px}
+.rs-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.rs-name{font-size:14px;font-weight:800;color:#fff}
+.rs-del{width:32px;height:32px;flex-shrink:0;border-radius:8px;border:1.5px solid var(--red);background:transparent;color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:.15s}
+.rs-del:hover{background:rgba(255,77,77,.12)}
+.rs-missing{color:var(--red);font-weight:700}
+.rs-row{display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-size:12px}
+.rs-lbl{color:var(--dim);flex-shrink:0}
+.rs-val{color:#fff;text-align:right;word-break:break-all}
+.rs-btn{width:100%;margin-top:12px;height:38px;border-radius:8px;cursor:pointer;background:transparent;border:1.5px solid var(--silver);color:var(--silver);font-size:11px;font-weight:700;letter-spacing:1px;transition:.15s}
+.rs-btn:hover{background:rgba(192,200,216,.08)}
+.rs-done{margin-top:12px;font-size:11px;font-weight:700;color:var(--silver);text-align:center;letter-spacing:.5px}
+.rs-err{font-size:11px;font-weight:600;color:var(--red);min-height:14px;line-height:1.4}
+
+.agent-card{background:var(--card-bg);border:1.5px solid var(--silver);border-radius:var(--r);padding:14px;margin-bottom:8px;display:flex;flex-direction:column;gap:8px}
+.agent-code{font-family:monospace;letter-spacing:2px}
+.agent-code.used{text-decoration:line-through;opacity:.5}
+
+.modal-bg{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:24px}
+.modal-bg.on{display:flex}
+.modal-bg.top{align-items:flex-start;padding:0}
+.modal-card{background:var(--card-bg);border:1.5px solid var(--silver);border-radius:14px;padding:24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:16px}
+.modal-card.wide{max-width:420px;border-radius:0 0 14px 14px;max-height:90vh;overflow-y:auto}
+.modal-msg{font-size:13px;font-weight:600;color:#fff;line-height:1.5;white-space:pre-line}
+.modal-sub{font-size:11px;color:var(--dim);margin-top:4px;white-space:pre-line}
+.modal-title{font-size:13px;font-weight:700;color:var(--dim);letter-spacing:.5px}
+.modal-btns{display:flex;gap:8px}
+.modal-btn{flex:1;height:42px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;border:1.5px solid;background:transparent}
+.modal-btn.cancel{border-color:var(--silver);color:var(--silver)}
+.modal-btn.cancel:hover{background:rgba(192,200,216,.08)}
+.modal-btn.ok{border-color:var(--silver);color:#fff}
+.modal-btn.ok:hover{background:rgba(255,255,255,.06)}
+.modal-btn.danger{border-color:var(--red);color:var(--red)}
+.modal-btn.danger:hover{background:rgba(255,77,77,.08)}
+.modal-in{width:100%;height:46px;padding:0 14px;background:#000;border:1.5px solid rgba(192,200,216,.35);border-radius:8px;color:#fff;font-size:14px;outline:none;transition:.2s}
+.modal-in:focus{border-color:var(--silver)}
+.modal-ta{width:100%;height:80px;padding:12px;background:#000;border:1.5px solid rgba(192,200,216,.35);border-radius:8px;color:#fff;font-size:13px;outline:none;resize:none}
+.modal-ta:focus{border-color:var(--silver)}
+
+.pct-row{display:flex;align-items:center;gap:8px}
+.pct-in{flex:1;font-size:18px;font-weight:800;text-align:center;height:52px}
+.pct-lbl{font-size:13px;font-weight:700;color:var(--dim)}
+.pct-note{font-size:18px;font-weight:800;color:var(--gold);text-align:center;margin-top:4px}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stats-cell{background:rgba(0,0,0,.4);border:1px solid rgba(192,200,216,.25);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.stats-cell-lbl{font-size:10px;color:var(--dim);font-weight:600;letter-spacing:.3px}
+.stats-cell-val{font-size:18px;font-weight:800;color:#fff}
+.stats-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.stats-date{font-size:12px;color:var(--dim)}
+
+.wipe-row{margin-top:14px;display:flex;justify-content:center}
+.wipe-btn{border:1.5px solid var(--red);background:rgba(255,77,77,.06);color:var(--red);border-radius:10px;padding:10px 16px;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.15s;letter-spacing:.4px}
+.wipe-btn:hover{background:rgba(255,77,77,.16)}
+.wipe-in{width:100%;height:44px;border-radius:8px;border:1.5px solid var(--red);background:transparent;color:#fff;text-align:center;font-size:15px;font-weight:800;letter-spacing:2px}
+
+#lightbox{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.97);flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+#lightbox.on{display:flex}
+#lb-close{position:absolute;top:14px;right:14px;width:44px;height:44px;border-radius:8px;border:1.5px solid rgba(192,200,216,.4);background:rgba(0,0,0,.6);color:#fff;font-size:18px;cursor:pointer;z-index:10001;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+#lb-container{width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none}
+#lb-img{max-width:100%;max-height:100%;border-radius:8px;transform-origin:center center;touch-action:none;user-select:none;-webkit-user-select:none}
+
+.empty-msg{text-align:center;padding:28px 16px;color:var(--dim);font-size:12px}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--card-bg);border:1.5px solid var(--silver);color:#fff;padding:10px 18px;border-radius:var(--r);font-size:12px;font-weight:700;opacity:0;transition:.25s;z-index:99999;pointer-events:none;white-space:nowrap;max-width:88vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.danger{border-color:var(--red);color:var(--red)}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-title"><span class="gold">&#11041;</span> CRYPTOCASINO</div>
+  <div class="gate-sub">ADMIN PANEL</div>
+  <div class="gate-card">
+    <div>
+      <div class="gate-lbl">Admin Password</div>
+      <div class="pw-wrap">
+        <input class="pw-in" type="password" id="adm-pw" placeholder="Enter password" autocomplete="off">
+        <span class="pw-eye" data-act="togglePw"><i class="fas fa-eye" id="pw-icon"></i></span>
+      </div>
+    </div>
+    <div class="gate-err" id="gate-err"></div>
+    <button class="gate-btn" data-act="login">ENTER</button>
+  </div>
+</div>
+
+<div id="admin">
+  <div class="a-body">
+    <div class="stat-panel">
+      <div class="stat-cell"><div class="stat-cell-lbl">Total Withdrawn</div><div class="stat-cell-val" id="i-wd">$0.00</div></div>
+      <div class="stat-cell"><div class="stat-cell-lbl">Total Deposited</div><div class="stat-cell-val" id="i-dep">$0.00</div></div>
+      <div class="stat-cell"><div class="stat-cell-lbl">Total Balance</div><div class="stat-cell-val" id="i-win">$0.00</div></div>
+      <div class="stat-cell"><div class="stat-cell-lbl">Total Network</div><div class="stat-cell-val" id="i-net">$0.00</div></div>
+      <div class="stat-cell"><div class="stat-cell-lbl">Deposit Users</div><div class="stat-cell-val" id="i-dep-users">0</div></div>
+      <div class="stat-cell"><div class="stat-cell-lbl">Total Users</div><div class="stat-cell-val" id="i-users">0</div></div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="nav-btn" id="nav-users" data-act="section" data-arg="users"><i class="fas fa-users"></i><span>Users</span></button>
+      <button class="nav-btn" id="nav-withdrawals" data-act="section" data-arg="withdrawals"><i class="fas fa-money-bill-transfer"></i><span>Withdrawals</span></button>
+      <button class="nav-btn" id="nav-kyc" data-act="section" data-arg="kyc"><i class="fas fa-id-card"></i><span>KYC</span></button>
+      <button class="nav-btn" id="nav-support-admin" data-act="section" data-arg="support-admin"><i class="fas fa-headset"></i><span>Support</span></button>
+      <button class="nav-btn" id="nav-resets" data-act="section" data-arg="resets"><i class="fas fa-key"></i><span>Resets</span></button>
+      <button class="nav-btn" id="nav-lock" data-act="section" data-arg="lock"><i class="fas fa-lock"></i><span>Lock</span></button>
+    </div>
+
+    <div class="wipe-row">
+      <button class="wipe-btn" data-act="wipe"><i class="fas fa-triangle-exclamation"></i><span>ERASE ENTIRE DATABASE</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="sec-users">
+  <div class="sec-hdr">
+    <button class="sec-back" data-act="closeSection"><i class="fas fa-arrow-left"></i></button>
+    <div class="sec-search">
+      <i class="fas fa-search search-icon"></i>
+      <input class="field-in search-in" id="user-search" placeholder="Username, email or invite code" autocomplete="off">
+    </div>
+  </div>
+  <div class="sec-body">
+    <div class="filter-bar" id="user-filter-bar"></div>
+    <div id="users-list"></div>
+  </div>
+</div>
+
+<div class="section" id="sec-user-detail">
+  <div class="sec-hdr">
+    <button class="sec-back" data-act="section" data-arg="users"><i class="fas fa-arrow-left"></i></button>
+    <div class="sec-hdr-actions">
+      <button class="ud-delete-btn" data-act="deleteUser" title="Delete user"><i class="fas fa-trash"></i></button>
+    </div>
+  </div>
+  <div class="sec-body" id="sec-user-detail-body"></div>
+</div>
+
+<div class="section" id="sec-withdrawals">
+  <div class="sec-hdr">
+    <button class="sec-back" data-act="closeSection"><i class="fas fa-arrow-left"></i></button>
+    <div class="sec-search">
+      <i class="fas fa-search search-icon"></i>
+      <input class="field-in search-in" id="wd-search" placeholder="Search user, then press Enter" autocomplete="off">
+    </div>
+  </div>
+  <div class="sec-body" id="sec-wd-body"></div>
+</div>
+
+<div class="section" id="sec-resets">
+  <div class="sec-hdr">
+    <button class="sec-back" data-act="closeSection"><i class="fas fa-arrow-left"></i></button>
+    <div class="sec-title">Password Resets</div>
+  </div>
+  <div class="sec-body" id="sec-resets-body"></div>
+</div>
+
+<div class="section" id="sec-lock">
+  <div class="sec-hdr">
+    <button class="sec-back" data-act="closeSection"><i class="fas fa-arrow-left"></i></button>
+    <div class="sec-search">
+      <i class="fas fa-search search-icon"></i>
+      <input class="field-in search-in" id="lock-search" placeholder="Username, email or invite code" autocomplete="off">
+    </div>
+  </div>
+  <div class="sec-body">
+    <div class="filter-bar" id="lock-filter-bar"></div>
+    <div id="lock-results"></div>
+  </div>
+</div>
+
+<div class="section" id="sec-support-admin">
+  <div class="sec-hdr">
+    <button class="sec-back" data-act="closeSection"><i class="fas fa-arrow-left"></i></button>
+    <div class="sec-title">Support</div>
+  </div>
+  <div class="sec-body">
+    <button class="main-btn open" id="sup-lock-btn" data-act="toggleSupportLock">
+      <i class="fas fa-lock-open" id="sup-lock-icon"></i><span id="sup-lock-text">Support Open</span>
+    </button>
+    <button class="main-btn" data-act="section" data-arg="sup-users">
+      <i class="fas fa-user-plus"></i><span>Support Users</span>
+    </button>
+  </div>
+</div>
+
+<div class="section" id="sec-sup-users">
+  <div class="sec-hdr">
+    <button class="sec-back" data-act="section" data-arg="support-admin"><i class="fas fa-arrow-left"></i></button>
+    <div class="sec-title">Support Users</div>
+  </div>
+  <div class="sec-body">
+    <div class="edit-block">
+      <div class="edit-title">Add Support Agent</div>
+      <div class="edit-row"><input class="edit-in" id="sup-agent-username" placeholder="Username" autocomplete="off"></div>
+      <div class="edit-row"><button class="edit-btn gold wide" data-act="generateSupCode">Generate Code</button></div>
+    </div>
+    <div id="sup-codes-list"></div>
+  </div>
+</div>
+
+<div class="section" id="sec-kyc">
+  <div class="sec-hdr">
+    <button class="sec-back" data-act="closeSection"><i class="fas fa-arrow-left"></i></button>
+    <div class="sec-search">
+      <i class="fas fa-search search-icon"></i>
+      <input class="field-in search-in" id="kyc-search" placeholder="Name, username, email or invite code" autocomplete="off">
+    </div>
+  </div>
+  <div class="sec-body">
+    <div class="filter-bar" id="kyc-filter-bar"></div>
+    <div id="kyc-list"></div>
+  </div>
+</div>
+
+<div class="section" id="sec-kyc-detail">
+  <div class="sec-hdr">
+    <button class="sec-back" data-act="section" data-arg="kyc"><i class="fas fa-arrow-left"></i></button>
+    <div class="sec-title">KYC Review</div>
+  </div>
+  <div class="sec-body" id="sec-kyc-detail-body"></div>
+</div>
+
+<div class="modal-bg top" id="wd-user-modal-bg">
+  <div class="modal-card wide">
+    <div class="wd-modal-head">
+      <div class="wd-modal-name" id="wd-modal-username">&#8212;</div>
+      <button class="ud-edit-btn" data-act="closeWdUserModal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="wd-modal-totals">
+      <div class="wd-modal-cell">
+        <div class="wd-modal-cell-lbl">Total Withdrawal</div>
+        <div class="wd-modal-cell-val" id="wd-modal-total-wd">$0.00</div>
+      </div>
+      <div class="wd-modal-cell">
+        <div class="wd-modal-cell-lbl">Total Deposit</div>
+        <div class="wd-modal-cell-val" id="wd-modal-total-dep">$0.00</div>
+      </div>
+    </div>
+    <div id="wd-modal-history"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="confirm-modal-bg">
+  <div class="modal-card">
+    <div class="modal-msg" id="confirm-modal-msg"></div>
+    <input class="wipe-in" id="wipe-confirm-in" placeholder="ERASE" autocomplete="off" style="display:none">
+    <div class="modal-btns">
+      <button class="modal-btn cancel" id="confirm-modal-cancel">Cancel</button>
+      <button class="modal-btn ok" id="confirm-modal-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="edit-modal-bg">
+  <div class="modal-card">
+    <div class="modal-title" id="edit-modal-title">Edit</div>
+    <input class="modal-in" id="edit-modal-in" type="text" autocomplete="off">
+    <div class="rs-err" id="edit-modal-err"></div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" data-act="closeEditModal">Cancel</button>
+      <button class="modal-btn ok" data-act="saveEditModal">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="m-setpw">
+  <div class="modal-card">
+    <div class="modal-msg">Set New Password<div class="modal-sub" id="setpw-who"></div></div>
+    <input class="modal-in" type="text" id="setpw-val" placeholder="New password" autocomplete="off">
+    <div class="rs-err" id="setpw-err"></div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" data-act="closeSetPw">Cancel</button>
+      <button class="modal-btn ok" id="setpw-btn" data-act="confirmSetPw">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="pct-modal-bg">
+  <div class="modal-card">
+    <div class="modal-msg" id="pct-modal-sub"></div>
+    <div class="pct-row">
+      <input class="edit-in pct-in" type="number" id="pct-custom" placeholder="%" step="1" min="0" inputmode="numeric">
+      <span class="pct-lbl">%</span>
+    </div>
+    <div class="pct-note" id="pct-credit-note">Can win: $0.00</div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" id="pct-modal-cancel">Cancel</button>
+      <button class="modal-btn ok" id="pct-modal-ok">Activate</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="lock-modal-bg">
+  <div class="modal-card">
+    <div class="modal-msg">Lock Account</div>
+    <textarea class="modal-ta" id="lock-msg" placeholder="Message to show the user..."></textarea>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" data-act="closeLockModal">Cancel</button>
+      <button class="modal-btn danger" data-act="confirmLock">Lock</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="stats-modal-bg">
+  <div class="modal-card" id="stats-modal-box"></div>
+</div>
+
+<div id="lightbox">
+  <button id="lb-close"><i class="fas fa-times"></i></button>
+  <div id="lb-container"><img id="lb-img" src="" alt=""></div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+
+const SUPABASE_URL='https://yylcjxmsscnyjgudtldt.supabase.co';
+const SUPABASE_KEY='sb_publishable_oXwWff5QMKYrTQncSltpVA_Jz-aco12';
+const _SBC=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false}});
+const _SB_TABLES=['casino_users','deposit_requests','withdrawal_requests','support_agents','support_chats','support_config','password_resets'];
+
+function _sbGetIn(obj,path){
+  let cur=obj;
+  for(let i=0;i<path.length;i++){
+    if(cur===null||cur===undefined||typeof cur!=='object')return null;
+    cur=cur[path[i]];
+    if(cur===undefined)return null;
+  }
+  return cur===undefined?null:cur;
+}
+
+function _SbSnap(val,key,ord){
+  this._v=(val===undefined?null:val);
+  this.key=key||null;
+  this._ord=ord||null;
+}
+_SbSnap.prototype.val=function(){return this._v;};
+_SbSnap.prototype.exists=function(){
+  const v=this._v;
+  if(v===null||v===undefined)return false;
+  if(typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===0)return false;
+  return true;
+};
+_SbSnap.prototype.child=function(p){
+  const parts=String(p).split('/').filter(s=>s.length);
+  return new _SbSnap(_sbGetIn(this._v,parts),parts[parts.length-1]||null);
+};
+_SbSnap.prototype.hasChild=function(p){return this.child(p).exists();};
+_SbSnap.prototype.numChildren=function(){
+  const v=this._v;
+  return (v&&typeof v==='object')?Object.keys(v).length:0;
+};
+_SbSnap.prototype.forEach=function(cb){
+  const v=this._v;
+  if(!v||typeof v!=='object')return false;
+  let keys=Object.keys(v);
+  const o=this._ord;
+  if(o){
+    keys.sort(function(a,b){
+      const x=(v[a]&&typeof v[a]==='object')?v[a][o]:undefined;
+      const y=(v[b]&&typeof v[b]==='object')?v[b][o]:undefined;
+      if(x===y)return a<b?-1:a>b?1:0;
+      if(x===undefined||x===null)return -1;
+      if(y===undefined||y===null)return 1;
+      return x>y?1:-1;
+    });
+  }else{
+    keys.sort();
+  }
+  for(let i=0;i<keys.length;i++){
+    if(cb(new _SbSnap(v[keys[i]],keys[i]))===true)return true;
+  }
+  return false;
+};
+
+const _SB_PUSH_CHARS='-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
+let _sbLastPushTime=0,_sbLastRand=[];
+function _sbPushId(){
+  let now=Date.now();
+  const dup=(now===_sbLastPushTime);
+  _sbLastPushTime=now;
+  const stamp=new Array(8);
+  for(let i=7;i>=0;i--){stamp[i]=_SB_PUSH_CHARS.charAt(now%64);now=Math.floor(now/64);}
+  let id=stamp.join('');
+  if(!dup){
+    for(let i=0;i<12;i++)_sbLastRand[i]=Math.floor(Math.random()*64);
+  }else{
+    let i=11;
+    for(;i>=0&&_sbLastRand[i]===63;i--)_sbLastRand[i]=0;
+    if(i>=0)_sbLastRand[i]++;
+  }
+  for(let i=0;i<12;i++)id+=_SB_PUSH_CHARS.charAt(_sbLastRand[i]);
+  return id;
+}
+
+let _sbChanSeq=0;
+const _sbListeners=[];
+
+function _SbRef(path,opts){
+  this.path=String(path).replace(/^\/+/,'').replace(/\/+$/,'');
+  const parts=this.path.split('/').filter(s=>s.length);
+  this.table=parts[0]||'';
+  this.rowKey=parts.length>1?parts[1]:null;
+  this.field=parts.slice(2);
+  this.key=parts.length?parts[parts.length-1]:null;
+  opts=opts||{};
+  this._ord=opts.ord||null;
+  this._eq=('eq' in opts)?opts.eq:undefined;
+  if(this.table&&_SB_TABLES.indexOf(this.table)<0)console.warn('[db] unknown table:',this.table);
+}
+_SbRef.prototype._clone=function(extra){
+  const o={ord:this._ord};
+  if(this._eq!==undefined)o.eq=this._eq;
+  for(const k in extra)o[k]=extra[k];
+  return new _SbRef(this.path,o);
+};
+_SbRef.prototype.child=function(p){return new _SbRef(this.path+'/'+String(p).replace(/^\/+/,''));};
+_SbRef.prototype.orderByChild=function(c){return this._clone({ord:c});};
+_SbRef.prototype.orderByKey=function(){return this._clone({});};
+_SbRef.prototype.equalTo=function(v){return this._clone({eq:v});};
+_SbRef.prototype.limitToLast=function(){return this;};
+_SbRef.prototype.limitToFirst=function(){return this;};
+
+_SbRef.prototype._read=async function(){
+  if(!this.rowKey){
+    let q=_SBC.from(this.table).select('key,data');
+    if(this._ord&&this._eq!==undefined)q=q.eq('data->>'+this._ord,String(this._eq));
+    const r=await q;
+    if(r.error)throw r.error;
+    const rows=r.data||[];
+    if(!rows.length)return new _SbSnap(null,this.table,this._ord);
+    const out={};
+    for(let i=0;i<rows.length;i++)out[rows[i].key]=rows[i].data;
+    return new _SbSnap(out,this.table,this._ord);
+  }
+  const r=await _SBC.from(this.table).select('data').eq('key',this.rowKey).maybeSingle();
+  if(r.error)throw r.error;
+  if(!r.data)return new _SbSnap(null,this.key,this._ord);
+  const v=this.field.length?_sbGetIn(r.data.data,this.field):r.data.data;
+  return new _SbSnap(v,this.key,this._ord);
+};
+_SbRef.prototype.get=function(){return this._read();};
+_SbRef.prototype.once=function(){return this._read();};
+
+_SbRef.prototype.set=async function(v){
+  if(v===undefined||v===null)return this.remove();
+  if(!this.rowKey)throw new Error('[db] set() needs key: '+this.path);
+  const r=await _SBC.rpc('rtdb_set',{p_table:this.table,p_key:this.rowKey,p_path:this.field,p_value:v});
+  if(r.error){console.error('[db set]',this.path,r.error);throw r.error;}
+  return this;
+};
+_SbRef.prototype.update=async function(o){
+  if(!o||typeof o!=='object')return this;
+  if(!this.rowKey)throw new Error('[db] update() needs key: '+this.path);
+  const r=await _SBC.rpc('rtdb_update',{p_table:this.table,p_key:this.rowKey,p_path:this.field,p_updates:o});
+  if(r.error){console.error('[db update]',this.path,r.error);throw r.error;}
+  return this;
+};
+_SbRef.prototype.remove=async function(){
+  if(!this.rowKey)throw new Error('[db] remove() needs key: '+this.path);
+  const r=await _SBC.rpc('rtdb_remove',{p_table:this.table,p_key:this.rowKey,p_path:this.field});
+  if(r.error){console.error('[db remove]',this.path,r.error);throw r.error;}
+  return this;
+};
+_SbRef.prototype.push=function(v){
+  const id=_sbPushId();
+  const ref=new _SbRef(this.path+'/'+id);
+  ref.key=id;
+  if(v!==undefined)ref.set(v);
+  return ref;
+};
+
+_SbRef.prototype.on=function(ev,cb){
+  const self=this;
+  let timer=null;
+  const emit=function(){
+    self._read().then(function(s){try{cb(s);}catch(e){console.error('[db cb]',self.path,e);}})
+                .catch(function(e){console.error('[db on]',self.path,e);});
+  };
+  emit();
+  const cfg={event:'*',schema:'public',table:this.table};
+  if(this.rowKey)cfg.filter='key=eq.'+this.rowKey;
+  const ch=_SBC.channel('rt_'+this.table+'_'+(this.rowKey||'all')+'_'+(++_sbChanSeq))
+    .on('postgres_changes',cfg,function(){
+      if(timer)clearTimeout(timer);
+      timer=setTimeout(emit,90);
+    })
+    .subscribe();
+  _sbListeners.push({path:this.path,cb:cb,ch:ch});
+  return cb;
+};
+_SbRef.prototype.off=function(ev,cb){
+  for(let i=_sbListeners.length-1;i>=0;i--){
+    const L=_sbListeners[i];
+    if(L.path!==this.path)continue;
+    if(cb&&L.cb!==cb)continue;
+    try{_SBC.removeChannel(L.ch);}catch(e){}
+    _sbListeners.splice(i,1);
+  }
+};
+_SbRef.prototype.claim=async function(v){
+  if(!this.rowKey)throw new Error('[db] claim() needs key: '+this.path);
+  if(!this.field.length)throw new Error('[db] claim() needs a field path: '+this.path);
+  const r=await _SBC.rpc('rtdb_claim',{p_table:this.table,p_key:this.rowKey,p_path:this.field,p_value:v});
+  if(r.error){console.error('[db claim]',this.path,r.error);throw r.error;}
+  return r.data;
+};
+_SbRef.prototype.add=async function(delta,min){
+  if(!this.rowKey)throw new Error('[db] add() needs key: '+this.path);
+  if(!this.field.length)throw new Error('[db] add() needs a field path: '+this.path);
+  const r=await _SBC.rpc('rtdb_add',{p_table:this.table,p_key:this.rowKey,p_path:this.field,p_delta:delta,p_min:(min===undefined?null:min)});
+  if(r.error){console.error('[db add]',this.path,r.error);throw r.error;}
+  return Number(r.data);
+};
+
+const db={
+  ref:function(p){return new _SbRef(p);},
+  wipe:async function(table){
+    const r=await _SBC.rpc('rtdb_wipe',{p_table:table});
+    if(r.error){console.error('[db wipe]',table,r.error);throw r.error;}
+  },
+  detachAll:function(){
+    for(let i=_sbListeners.length-1;i>=0;i--){
+      try{_SBC.removeChannel(_sbListeners[i].ch);}catch(e){}
+      _sbListeners.splice(i,1);
+    }
+  }
+};
+
+const TOAST_MS=2600;
+const DASH='\u2014';
+const APPROX='\u2248';
+const USERNAME_RE=/^[a-z]{6,12}$/;
+const PIN_RE=/^\d{6}$/;
+const CRYPTO_RATES={usdt:1.00,doge:0.35,shib:0.000023,pepe:0.000018,bonk:0.000032,floki:0.00019};
+const DOC_NAMES={id_card:'National ID card',passport:'International passport',license:"Driver's licence",residence:'Residence permit'};
+const WIPE_TABLES=['casino_users','deposit_requests','withdrawal_requests','support_agents','support_chats','support_config','password_resets'];
+
+let allUsers={},allWdRequests={},allDepRequests={},allResets={};
+let currentDetailKey=null,currentDetailUser=null;
+let lockTargetKey=null;
+let userFilter='all',lockFilter='unlocked',wdFilter='pending',resetFilter='pending',kycTab='pending';
+let setPwId=null;
+let confirmResolve=null,editResolve=null,pctResolve=null;
+let pctAmount=0,pctValue=null;
+let busy=false;
+let toastTimer=null;
+let lbScale=1,lbX=0,lbY=0,lbLastDist=0,lbDragging=false,lbDragStart={x:0,y:0},lbLastTap=0;
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>(parseFloat(n)||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function fmtCrypto(n){
+  const v=parseFloat(n)||0;
+  if(v<=0)return'0';
+  if(v<0.0001)return v.toExponential(2);
+  if(v<1)return v.toFixed(6);
+  if(v<1000)return v.toFixed(2);
+  return Math.round(v).toLocaleString('en');
+}
+
+function fmtDate(v){
+  if(!v)return DASH;
+  const d=(typeof v==='number')?new Date(v):new Date(String(v));
+  if(isNaN(d.getTime()))return String(v);
+  const p=n=>String(n).padStart(2,'0');
+  return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes());
+}
+
+function fmtMins(ms){
+  const mins=Math.round((ms||0)/60000);
+  if(mins<60)return mins+' min';
+  return Math.floor(mins/60)+'h '+(mins%60)+'m';
+}
+
+function safeUrl(u){
+  const s=String(u||'').trim();
+  return /^(https?:\/\/|data:image\/)/i.test(s)?s:'';
+}
+
+function showToast(msg,cls){
+  const el=$('toast');
+  el.textContent=msg;
+  el.className='on'+(cls?' '+cls:'');
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{el.className='';},TOAST_MS);
+}
+
+function togglePw(){
+  const el=$('adm-pw'),ic=$('pw-icon');
+  const hidden=el.type==='password';
+  el.type=hidden?'text':'password';
+  ic.className=hidden?'fas fa-eye-slash':'fas fa-eye';
+}
+
+async function adminLogin(){
+  if(busy)return;
+  const pw=($('adm-pw').value||'').trim();
+  const err=$('gate-err');
+  err.textContent='';
+  if(!pw){err.textContent='Enter admin password.';return;}
+  busy=true;
+  try{
+    const r=await _SBC.rpc('admin_login',{p_password:pw});
+    if(r.error)throw r.error;
+    if(r.data!==true){err.textContent='Incorrect password.';return;}
+  }catch(e){
+    console.error('[adminLogin]',e);
+    err.textContent='Connection error. Please try again.';
+    return;
+  }finally{
+    busy=false;
+  }
+  $('adm-pw').value='';
+  $('gate').classList.add('off');
+  $('admin').classList.add('on');
+  loadAll().then(subscribeAll);
+}
+
+async function loadAll(){
+  try{
+    const [uS,wS,dS,rS]=await Promise.all([
+      db.ref('casino_users').get(),
+      db.ref('withdrawal_requests').get(),
+      db.ref('deposit_requests').get(),
+      db.ref('password_resets').get()
+    ]);
+    allUsers=uS.exists()?(uS.val()||{}):{};
+    allWdRequests=wS.exists()?(wS.val()||{}):{};
+    allDepRequests=dS.exists()?(dS.val()||{}):{};
+    allResets=rS.exists()?(rS.val()||{}):{};
+    renderInfo();
+  }catch(e){
+    console.error('[loadAll]',e);
+    showToast('Failed to load data.','danger');
+  }
+}
+
+function subscribeAll(){
+  const bind=(table,assign)=>{
+    db.ref(table).off('value');
+    db.ref(table).on('value',snap=>{
+      assign(snap.exists()?(snap.val()||{}):{});
+      refreshActive();
+    });
+  };
+  bind('casino_users',v=>{allUsers=v;});
+  bind('withdrawal_requests',v=>{allWdRequests=v;});
+  bind('deposit_requests',v=>{allDepRequests=v;});
+  bind('password_resets',v=>{allResets=v;});
+  db.ref('support_config/locked').off('value');
+  db.ref('support_config/locked').on('value',snap=>{
+    updateSupLockUI(snap.exists()&&snap.val()===true);
+  });
+}
+
+function refreshActive(){
+  renderInfo();
+  const open=document.querySelector('.section.on');
+  if(!open)return;
+  const id=open.id;
+  if(id==='sec-users')filterUsers();
+  else if(id==='sec-withdrawals')renderWd();
+  else if(id==='sec-resets')renderResets();
+  else if(id==='sec-lock')onLockSearch();
+  else if(id==='sec-kyc')renderKycList();
+}
+
+const wdIsCounted=w=>(w&&w.status||'pending')!=='rejected';
+const wdUsd=w=>parseFloat(w&&w.usdValue!=null?w.usdValue:(w?w.eurValue:0))||0;
+const userDeposited=u=>parseFloat(u&&u.depositTotal)||0;
+
+function userWithdrawn(u){
+  return Object.values((u&&u.withdrawals)||{}).filter(wdIsCounted).reduce((s,w)=>s+wdUsd(w),0);
+}
+
+function userCryptoUsd(u){
+  const cb=(u&&u.cryptoBalances)||{};
+  let t=0;
+  for(const k in cb)t+=(parseFloat(cb[k])||0)*(CRYPTO_RATES[k]||0);
+  return t;
+}
+
+function renderInfo(){
+  const users=Object.values(allUsers);
+  const withdrawals=Object.values(allWdRequests);
+  $('i-dep').textContent='$'+fmt(users.reduce((s,u)=>s+userDeposited(u),0));
+  $('i-wd').textContent='$'+fmt(withdrawals.filter(wdIsCounted).reduce((s,w)=>s+wdUsd(w),0));
+  $('i-win').textContent='$'+fmt(users.reduce((s,u)=>s+(parseFloat(u.balance)||0)+userCryptoUsd(u),0));
+  $('i-net').textContent='$'+fmt(users.reduce((s,u)=>s+(parseFloat(u.referralEarnings)||0),0));
+  $('i-dep-users').textContent=users.filter(u=>userDeposited(u)>0).length;
+  $('i-users').textContent=users.length;
+}
+
+function openSection(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  const sec=$('sec-'+name);
+  if(sec)sec.classList.add('on');
+  const nb=$('nav-'+name);
+  if(nb)nb.classList.add('on');
+  if(name==='users')filterUsers();
+  else if(name==='withdrawals')renderWd();
+  else if(name==='resets')renderResets();
+  else if(name==='kyc')renderKycList();
+  else if(name==='sup-users')loadSupCodes();
+  else if(name==='lock'){
+    const inp=$('lock-search');
+    if(inp)inp.value='';
+    lockFilter='unlocked';
+    onLockSearch();
+  }
+}
+
+function closeSection(){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+}
+
+function showConfirm(msg,okLabel,okClass){
+  return new Promise(resolve=>{
+    if(confirmResolve){confirmResolve(false);confirmResolve=null;}
+    confirmResolve=resolve;
+    $('confirm-modal-msg').textContent=msg;
+    const okBtn=$('confirm-modal-ok');
+    okBtn.textContent=okLabel||'Confirm';
+    okBtn.className='modal-btn '+(okClass||'ok');
+    okBtn.onclick=()=>{closeConfirm();resolve(true);};
+    $('confirm-modal-cancel').onclick=()=>{closeConfirm();resolve(false);};
+    $('confirm-modal-bg').classList.add('on');
+  });
+}
+
+function closeConfirm(){
+  $('confirm-modal-bg').classList.remove('on');
+  $('wipe-confirm-in').style.display='none';
+  confirmResolve=null;
+}
+
+function showEditModal(label,currentVal){
+  return new Promise(resolve=>{
+    if(editResolve){editResolve(null);editResolve=null;}
+    editResolve=resolve;
+    $('edit-modal-title').textContent='Edit '+label;
+    $('edit-modal-err').textContent='';
+    const inp=$('edit-modal-in');
+    inp.value=currentVal==null?'':String(currentVal);
+    $('edit-modal-bg').classList.add('on');
+    setTimeout(()=>inp.focus(),80);
+  });
+}
+
+function closeEditModal(){
+  $('edit-modal-bg').classList.remove('on');
+  if(editResolve){editResolve(null);editResolve=null;}
+}
+
+function saveEditModal(){
+  const val=$('edit-modal-in').value;
+  $('edit-modal-bg').classList.remove('on');
+  if(editResolve){editResolve(val);editResolve=null;}
+}
+
+function userMatches(u,q){
+  if(!q)return true;
+  return (u.username||'').toLowerCase().includes(q)
+      || (u.email||'').toLowerCase().includes(q)
+      || (u.inviteCode||'').toLowerCase().includes(q);
+}
+
+function filterUsers(){
+  const q=($('user-search').value||'').trim().toLowerCase();
+  const entries=Object.entries(allUsers);
+  const dep=entries.filter(([,u])=>userDeposited(u)>0).length;
+  const counts={all:entries.length,deposited:dep,'not-deposited':entries.length-dep};
+  const labels={all:'All',deposited:'Deposited','not-deposited':'Not Deposited'};
+
+  $('user-filter-bar').innerHTML=Object.keys(counts).map(f=>
+    '<button class="filter-btn'+(userFilter===f?' on':'')+'" data-act="userFilter" data-arg="'+f+'">'
+    +labels[f]+' <span class="filter-cnt">('+counts[f]+')</span></button>').join('');
+
+  let filtered=entries;
+  if(q)filtered=filtered.filter(([,u])=>userMatches(u,q));
+  if(userFilter==='deposited')filtered=filtered.filter(([,u])=>userDeposited(u)>0);
+  else if(userFilter==='not-deposited')filtered=filtered.filter(([,u])=>userDeposited(u)<=0);
+
+  const list=$('users-list');
+  if(!filtered.length){list.innerHTML='<div class="empty-msg">No users found.</div>';return;}
+  list.innerHTML=filtered.map(([k,u])=>{
+    const nm=esc(((u.firstName||'')+' '+(u.lastName||'')).trim())||DASH;
+    const un=u.username?'@'+esc(u.username)+' \u00b7 ':'';
+    return '<div class="user-row" data-act="showDetail" data-arg="'+esc(k)+'">'
+      +'<div class="user-nm">'+nm+'</div>'
+      +'<div class="user-em">'+un+esc(u.email||k)+'</div></div>';
+  }).join('');
+}
+
+function detailRow(label,value,field,mono){
+  const btn=field?'<button class="ud-edit-btn" data-act="editField" data-arg="'+field+'"><i class="fas fa-pen"></i></button>':'';
+  return '<div class="ud-row"><span class="ud-row-lbl">'+label+'</span>'
+    +'<span class="ud-row-val'+(mono?' mono':'')+'">'+value+'</span>'+btn+'</div>';
+}
+
+function showDetail(key){
+  const u=allUsers[key];
+  if(!u)return;
+  currentDetailKey=key;
+  currentDetailUser=u;
+  $('sec-user-detail-body').innerHTML=`
+    <div class="edit-block">
+      <div class="edit-title">Add Deposit</div>
+      <div class="edit-row">
+        <input class="edit-in" type="number" id="ed-dep" step="0.01" min="0" inputmode="decimal">
+        <button class="edit-btn gold" data-act="addDeposit">Activate</button>
+      </div>
+    </div>
+    <div class="ud-stat-grid">
+      <div class="ud-stat"><div class="ud-stat-lbl">Total Withdrawn</div><div class="ud-stat-val">$${fmt(userWithdrawn(u))}</div></div>
+      <div class="ud-stat"><div class="ud-stat-lbl">Total Deposited</div><div class="ud-stat-val">$${fmt(userDeposited(u))}</div></div>
+      <div class="ud-stat"><div class="ud-stat-lbl">Referral Earnings</div><div class="ud-stat-val">$${fmt(u.referralEarnings)}</div></div>
+      <div class="ud-stat"><div class="ud-stat-lbl">Invited Users</div><div class="ud-stat-val">${Object.keys(u.referrals||{}).length}</div></div>
+    </div>
+    <div class="ud-card">
+      ${detailRow('First name',esc(u.firstName||DASH),'firstName')}
+      ${detailRow('Last name',esc(u.lastName||DASH),'lastName')}
+      ${detailRow('Username',esc(u.username||DASH),'username')}
+      ${detailRow('Email',esc(u.email||DASH),null)}
+      ${detailRow('Password',esc(u.passwordPlain||DASH),'passwordPlain')}
+      ${detailRow('PIN Code',esc(u.pinPlain||DASH),'pinPlain')}
+      ${detailRow('Invite Code',esc(u.inviteCode||u.referralCode||DASH),null,true)}
+      <div class="ud-note">Email is the account identifier and cannot be changed here.</div>
+    </div>`;
+  openSection('user-detail');
+}
+
+function validateField(field,val){
+  if(field==='username'){
+    if(!USERNAME_RE.test(val))return 'Username must be 6 to 12 lowercase letters.';
+  }else if(field==='pinPlain'){
+    if(!PIN_RE.test(val))return 'PIN must be exactly 6 digits.';
+  }else if(field==='passwordPlain'){
+    return validateUserPassword(val);
+  }else if(field==='firstName'||field==='lastName'){
+    if(!val.trim())return 'This field cannot be empty.';
+  }
+  return '';
+}
+
+function validateUserPassword(pw){
+  if(pw.length<12)return'Password must be at least 12 characters.';
+  if(pw.length>30)return'Password must be at most 30 characters.';
+  if(!/[A-Z]/.test(pw))return'Password must contain at least one uppercase letter.';
+  if(!/[a-z]/.test(pw))return'Password must contain at least one lowercase letter.';
+  if(!/[^A-Za-z0-9]/.test(pw))return'Password must contain at least one special character.';
+  if(/\s/.test(pw))return'Password must not contain spaces.';
+  return'';
+}
+
+async function editField(field){
+  if(!currentDetailKey||!currentDetailUser)return;
+  const labels={firstName:'First name',lastName:'Last name',username:'Username',
+    passwordPlain:'Password',pinPlain:'PIN'};
+  const label=labels[field]||field;
+  const raw=await showEditModal(label,currentDetailUser[field]||'');
+  if(raw===null)return;
+  let val=String(raw);
+  if(field==='username')val=val.trim().toLowerCase();
+  else if(field==='firstName'||field==='lastName')val=val.trim();
+  const err=validateField(field,val);
+  if(err){showToast(err,'danger');return;}
+
+  if(field==='username'){
+    const clash=Object.entries(allUsers).find(([k,u])=>k!==currentDetailKey&&(u.username||'')===val);
+    if(clash){showToast('That username is already taken.','danger');return;}
+  }
+  try{
+    const patch={};
+    patch[field]=val;
+    await db.ref('casino_users/'+currentDetailKey).update(patch);
+    currentDetailUser[field]=val;
+    allUsers[currentDetailKey]=currentDetailUser;
+    showDetail(currentDetailKey);
+    showToast(label+' updated.');
+  }catch(e){
+    console.error('[editField]',e);
+    showToast('Failed to save.','danger');
+  }
+}
+
+async function deleteCurrentUser(){
+  if(busy||!currentDetailKey||!currentDetailUser)return;
+  const key=currentDetailKey;
+  const nm=((currentDetailUser.firstName||'')+' '+(currentDetailUser.lastName||'')).trim();
+  const em=currentDetailUser.email||key;
+  const ok=await showConfirm('Permanently delete '+(nm||em)+'?\n\nTheir deposits, withdrawals, support chat, password resets and referral links will be removed too.\n\nThis cannot be undone.','Delete','danger');
+  if(!ok)return;
+  busy=true;
+  try{
+    for(const [id,d] of Object.entries(allDepRequests)){
+      if(d&&d.userKey===key)await db.ref('deposit_requests/'+id).remove();
+    }
+    for(const [id,w] of Object.entries(allWdRequests)){
+      if(w&&w.userKey===key)await db.ref('withdrawal_requests/'+id).remove();
+    }
+    const email=String(currentDetailUser.email||'').toLowerCase();
+    for(const [id,r] of Object.entries(allResets)){
+      if(r&&String(r.email||'').toLowerCase()===email)await db.ref('password_resets/'+id).remove();
+    }
+    await db.ref('support_chats/'+key).remove();
+    for(const [k,u] of Object.entries(allUsers)){
+      if(k===key)continue;
+      if(u&&u.referrals&&u.referrals[key]){
+        await db.ref('casino_users/'+k+'/referrals/'+key).remove();
+        delete allUsers[k].referrals[key];
+      }
+    }
+    await db.ref('casino_users/'+key).remove();
+    delete allUsers[key];
+    currentDetailKey=null;
+    currentDetailUser=null;
+    showToast('User deleted.');
+    renderInfo();
+    openSection('users');
+  }catch(e){
+    console.error('[deleteUser]',e);
+    showToast('Failed to delete user.','danger');
+  }finally{
+    busy=false;
+  }
+}
+
+function pickDepositPct(amount){
+  return new Promise(resolve=>{
+    if(pctResolve){pctResolve(null);pctResolve=null;}
+    pctResolve=resolve;
+    pctAmount=amount;
+    pctValue=null;
+    $('pct-modal-sub').textContent='Deposit: $'+fmt(amount);
+    $('pct-custom').value='';
+    updatePctNote();
+    $('pct-modal-ok').onclick=()=>{
+      if(pctValue===null){showToast('Choose a payout percentage.','danger');return;}
+      closePctModal();
+      resolve(pctValue);
+    };
+    $('pct-modal-cancel').onclick=()=>{closePctModal();resolve(null);};
+    $('pct-modal-bg').classList.add('on');
+    setTimeout(()=>$('pct-custom').focus(),80);
+  });
+}
+
+function updatePctNote(){
+  const budget=pctValue===null?0:pctAmount*(pctValue/100);
+  $('pct-credit-note').textContent='Can win: $'+fmt(budget);
+}
+
+function pctCustom(){
+  const raw=parseFloat($('pct-custom').value);
+  pctValue=isNaN(raw)?null:Math.max(0,raw);
+  updatePctNote();
+}
+
+function closePctModal(){
+  $('pct-modal-bg').classList.remove('on');
+  pctResolve=null;
+}
+
+async function addUserDeposit(){
+  if(busy||!currentDetailKey||!currentDetailUser)return;
+  const input=$('ed-dep');
+  const amt=parseFloat(input&&input.value)||0;
+  if(amt<=0){showToast('Enter a valid amount.','danger');return;}
+  const pct=await pickDepositPct(amt);
+  if(pct===null)return;
+  const budgetAdd=amt*(pct/100);
+  const ok=await showConfirm('Add $'+fmt(amt)+' deposit at '+pct+'%\n\nBalance +$'+fmt(amt)+'\nCan win up to $'+fmt(budgetAdd),'Activate','ok');
+  if(!ok)return;
+  busy=true;
+  const key=currentDetailKey;
+  try{
+    const snap=await db.ref('casino_users/'+key).get();
+    const fresh=snap.exists()?(snap.val()||{}):{};
+    const now=Date.now();
+    const depId='dep_'+now+'_'+Math.random().toString(36).slice(2,8);
+    const newBal=(parseFloat(fresh.balance)||0)+amt;
+    const newDep=(parseFloat(fresh.depositTotal)||0)+amt;
+    const newBudget=(parseFloat(fresh.winBudget)||0)+budgetAdd;
+    const ledger={
+      id:depId,
+      userKey:key,
+      userEmail:fresh.email||'',
+      userName:((fresh.firstName||'')+' '+(fresh.lastName||'')).trim(),
+      coin:'manual',
+      coinName:'Manual (admin)',
+      usdAmount:amt,
+      cryptoAmount:0,
+      payoutPct:pct,
+      creditedAmount:amt,
+      winBudgetAdded:budgetAdd,
+      status:'activated',
+      createdAt:now,
+      activatedAt:now
+    };
+    await db.ref('casino_users/'+key).update({balance:newBal,depositTotal:newDep,winBudget:newBudget});
+    await db.ref('deposit_requests/'+depId).set(ledger);
+    const merged=Object.assign({},fresh,{balance:newBal,depositTotal:newDep,winBudget:newBudget});
+    allUsers[key]=merged;
+    allDepRequests[depId]=ledger;
+    if(currentDetailKey===key){currentDetailUser=merged;showDetail(key);}
+    renderInfo();
+    showToast('Deposit $'+fmt(amt)+' at '+pct+'% activated.');
+  }catch(e){
+    console.error('[deposit]',e);
+    showToast('Failed to add deposit.','danger');
+  }finally{
+    busy=false;
+  }
+}
+
+function renderWd(){
+  const body=$('sec-wd-body');
+  const items=Object.entries(allWdRequests).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+  const pending=items.filter(([,w])=>(w.status||'pending')==='pending');
+  const approved=items.filter(([,w])=>w.status==='approved');
+  const shown=wdFilter==='pending'?pending:approved;
+
+  let html='<div class="filter-bar">'
+    +'<button class="filter-btn'+(wdFilter==='pending'?' on':'')+'" data-act="wdFilter" data-arg="pending">Pending <span class="filter-cnt">$'+fmt(pending.reduce((s,[,w])=>s+wdUsd(w),0))+'</span></button>'
+    +'<button class="filter-btn'+(wdFilter==='approved'?' on':'')+'" data-act="wdFilter" data-arg="approved">Approved <span class="filter-cnt">$'+fmt(approved.reduce((s,[,w])=>s+wdUsd(w),0))+'</span></button>'
+    +'</div>';
+
+  if(!shown.length){body.innerHTML=html+'<div class="empty-msg">No requests.</div>';return;}
+
+  html+=shown.map(([id,w])=>{
+    const addr=w.address||'';
+    const copy=addr?'<button class="wd-copy-btn" data-act="copyAddr" data-arg="'+esc(addr)+'"><i class="fas fa-copy"></i></button>':'';
+    const actions=wdFilter==='pending'
+      ?'<div class="wd-btn-row"><button class="wd-approve-btn" data-act="approveWd" data-arg="'+esc(id)+'">Approve</button>'
+       +'<button class="wd-reject-btn" data-act="rejectWd" data-arg="'+esc(id)+'">Reject</button></div>':'';
+    return '<div class="wd-card">'
+      +'<div class="wd-card-amt">'+fmtCrypto(w.amount)+' '+esc(w.ticker||'')
+        +'<span class="wd-card-eur">'+APPROX+' $'+fmt(wdUsd(w))+'</span></div>'
+      +'<div class="wd-card-user">'+esc(w.userEmail||'')+'</div>'
+      +'<div class="wd-addr-row"><div class="wd-card-addr">'+esc(addr)+'</div>'+copy+'</div>'
+      +actions+'</div>';
+  }).join('');
+  body.innerHTML=html;
+}
+
+async function withdrawalStatus(id){
+  const snap=await db.ref('withdrawal_requests/'+id).get();
+  if(!snap.exists())return null;
+  return (snap.val()||{}).status||'pending';
+}
+
+async function approveWd(id){
+  if(busy)return;
+  const w=allWdRequests[id];
+  if(!w)return;
+  const ok=await showConfirm('Approve '+fmtCrypto(w.amount)+' '+(w.ticker||'')+'\n'+APPROX+' $'+fmt(wdUsd(w))+'?','Approve','ok');
+  if(!ok)return;
+  busy=true;
+  try{
+    const status=await withdrawalStatus(id);
+    if(status===null){showToast('Request no longer exists.','danger');return;}
+    if(status!=='pending'){showToast('Already '+status+'.','danger');return;}
+    const now=Date.now();
+    await db.ref('withdrawal_requests/'+id).update({status:'approved',approvedAt:now});
+    if(w.userKey)await db.ref('casino_users/'+w.userKey+'/withdrawals/'+id).update({status:'approved',approvedAt:now});
+    if(allWdRequests[id])allWdRequests[id].status='approved';
+    renderWd();
+    renderInfo();
+    showToast('Approved.');
+  }catch(e){
+    console.error('[approveWd]',e);
+    showToast('Failed.','danger');
+  }finally{
+    busy=false;
+  }
+}
+
+async function rejectWd(id){
+  if(busy)return;
+  const w=allWdRequests[id];
+  if(!w)return;
+  const ok=await showConfirm('Reject '+fmtCrypto(w.amount)+' '+(w.ticker||'')+'?\n\nThe coins and the withdrawn total will be returned to the user.','Reject','danger');
+  if(!ok)return;
+  busy=true;
+  try{
+    const status=await withdrawalStatus(id);
+    if(status===null){showToast('Request no longer exists.','danger');return;}
+    if(status!=='pending'){showToast('Already '+status+'.','danger');return;}
+    const now=Date.now();
+    await db.ref('withdrawal_requests/'+id).update({status:'rejected',rejectedAt:now});
+    if(w.userKey){
+      await db.ref('casino_users/'+w.userKey+'/withdrawals/'+id).update({status:'rejected',rejectedAt:now});
+      const snap=await db.ref('casino_users/'+w.userKey).get();
+      const fresh=snap.exists()?(snap.val()||{}):{};
+      const cb=Object.assign({},fresh.cryptoBalances||{});
+      if(w.coin)cb[w.coin]=(parseFloat(cb[w.coin])||0)+(parseFloat(w.amount)||0);
+      const back=Math.max(0,(parseFloat(fresh.withdrawTotal)||0)-wdUsd(w));
+      await db.ref('casino_users/'+w.userKey).update({cryptoBalances:cb,withdrawTotal:back});
+      allUsers[w.userKey]=Object.assign({},fresh,{cryptoBalances:cb,withdrawTotal:back});
+    }
+    if(allWdRequests[id])allWdRequests[id].status='rejected';
+    renderWd();
+    renderInfo();
+    showToast('Rejected \u2014 coins returned.');
+  }catch(e){
+    console.error('[rejectWd]',e);
+    showToast('Failed.','danger');
+  }finally{
+    busy=false;
+  }
+}
+
+function wdSearchSubmit(){
+  const q=($('wd-search').value||'').trim().toLowerCase();
+  if(!q)return;
+  const found=Object.entries(allUsers).find(([,u])=>userMatches(u,q));
+  if(!found){showToast('User not found.','danger');return;}
+  openWdUserModal(found[0],found[1]);
+}
+
+function openWdUserModal(key,u){
+  $('wd-modal-username').textContent=((u.firstName||'')+' '+(u.lastName||'')).trim()||u.email||key;
+  $('wd-modal-total-dep').textContent='$'+fmt(userDeposited(u));
+  const wds=Object.values(u.withdrawals||{});
+  $('wd-modal-total-wd').textContent='$'+fmt(wds.filter(wdIsCounted).reduce((s,w)=>s+wdUsd(w),0));
+  const hist=$('wd-modal-history');
+  if(!wds.length){
+    hist.innerHTML='<div class="empty-msg">No transactions.</div>';
+  }else{
+    hist.innerHTML=[...wds].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).map(w=>{
+      const addr=w.address||'';
+      const copy=addr?'<button class="wd-copy-btn" data-act="copyAddr" data-arg="'+esc(addr)+'"><i class="fas fa-copy"></i> Copy</button>':'';
+      const status=w.status||'pending';
+      return '<div class="wd-tx-item">'
+        +'<div class="wd-tx-top">'
+          +'<span class="wd-tx-amt">'+fmtCrypto(w.amount)+' '+esc(w.ticker||'')
+            +' <span class="wd-tx-sub">'+APPROX+' $'+fmt(wdUsd(w))+'</span></span>'
+          +'<span class="wd-tx-sub">'+(w.createdAt?new Date(w.createdAt).toLocaleDateString('en-GB'):DASH)+'</span>'
+        +'</div>'
+        +'<div class="wd-addr-row"><span class="wd-card-addr">'+(esc(addr)||DASH)+'</span>'+copy+'</div>'
+        +'<div class="wd-tx-status '+esc(status)+'">'+esc(status)+'</div>'
+      +'</div>';
+    }).join('');
+  }
+  $('wd-user-modal-bg').classList.add('on');
+}
+
+function closeWdUserModal(){
+  $('wd-user-modal-bg').classList.remove('on');
+  $('wd-search').value='';
+}
+
+function copyAddr(addr){
+  const done=()=>showToast('Address copied.');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(addr).then(done).catch(()=>fallbackCopy(addr,done));
+  }else{
+    fallbackCopy(addr,done);
+  }
+}
+
+function fallbackCopy(text,done){
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  document.body.appendChild(ta);
+  ta.select();
+  try{document.execCommand('copy');done();}catch(e){showToast('Copy failed.','danger');}
+  document.body.removeChild(ta);
+}
+
+function resetUser(r){
+  const em=String(r&&r.email||'').toLowerCase();
+  for(const k in allUsers){
+    if(String(allUsers[k]&&allUsers[k].email||'').toLowerCase()===em)return {key:k,u:allUsers[k]};
+  }
+  return null;
+}
+
+function userDob(u){
+  const d=(u&&u.dob)||{};
+  if(!d.day||!d.month||!d.year)return '';
+  return String(parseInt(d.day,10)).padStart(2,'0')+'/'
+        +String(parseInt(d.month,10)).padStart(2,'0')+'/'+d.year;
+}
+
+async function deleteReset(id){
+  const r=allResets[id];
+  if(!r||busy)return;
+  const ok=await showConfirm('Delete this password reset request?\n\n'+(r.email||''),'Delete','danger');
+  if(!ok)return;
+  busy=true;
+  try{
+    await db.ref('password_resets/'+id).remove();
+    delete allResets[id];
+    renderResets();
+    showToast('Request deleted.');
+  }catch(e){
+    console.error('[deleteReset]',e);
+    showToast('Failed to delete.','danger');
+  }finally{
+    busy=false;
+  }
+}
+
+function renderResets(){
+  const body=$('sec-resets-body');
+  const items=Object.entries(allResets)
+    .sort((a,b)=>String(b[1].createdAt||'').localeCompare(String(a[1].createdAt||'')));
+  const pending=items.filter(([,r])=>(r.status||'pending')==='pending');
+  const changed=items.filter(([,r])=>r.status==='changed');
+  const shown=resetFilter==='pending'?pending:changed;
+
+  let html='<div class="filter-bar">'
+    +'<button class="filter-btn'+(resetFilter==='pending'?' on':'')+'" data-act="resetFilter" data-arg="pending">Pending <span class="filter-cnt">'+pending.length+'</span></button>'
+    +'<button class="filter-btn'+(resetFilter==='changed'?' on':'')+'" data-act="resetFilter" data-arg="changed">Changed <span class="filter-cnt">'+changed.length+'</span></button>'
+    +'</div>';
+
+  if(!shown.length){body.innerHTML=html+'<div class="empty-msg">No requests.</div>';return;}
+
+  html+=shown.map(([id,r])=>{
+    const hit=resetUser(r);
+    const name=hit
+      ?esc(((hit.u.firstName||'')+' '+(hit.u.lastName||'')).trim())||DASH
+      :'<span class="rs-missing">No matching account</span>';
+    const regDob=r.regDob||(hit?userDob(hit.u):'');
+    const given=r.dob||'';
+    const match=regDob&&given&&regDob===given;
+    const dobCls=match?'rs-val':'rs-val rs-missing';
+    const act=resetFilter==='pending'
+      ?'<button class="rs-btn" data-act="openSetPw" data-arg="'+esc(id)+'">Change Password</button>'
+      :'<div class="rs-done">Changed '+fmtDate(r.changedAt)+'</div>';
+    return '<div class="rs-card">'
+      +'<div class="rs-head">'
+        +'<div class="rs-name">'+name+'</div>'
+        +'<button class="rs-del" data-act="deleteReset" data-arg="'+esc(id)+'" title="Delete request"><i class="fas fa-trash"></i></button>'
+      +'</div>'
+      +'<div class="rs-row"><span class="rs-lbl">Email</span><span class="rs-val">'+esc(r.email||'')+'</span></div>'
+      +'<div class="rs-row"><span class="rs-lbl">Registered</span><span class="rs-val">'+(hit?fmtDate(hit.u.createdAt):DASH)+'</span></div>'
+      +'<div class="rs-row"><span class="rs-lbl">Date of birth at sign-up</span><span class="rs-val">'+(esc(regDob)||DASH)+'</span></div>'
+      +'<div class="rs-row"><span class="rs-lbl">Date of birth given</span><span class="'+dobCls+'">'+(esc(given)||DASH)+'</span></div>'
+      +'<div class="rs-row"><span class="rs-lbl">Requested</span><span class="rs-val">'+fmtDate(r.createdAt)+'</span></div>'
+      +act+'</div>';
+  }).join('');
+  body.innerHTML=html;
+}
+
+function openSetPw(id){
+  const r=allResets[id];
+  if(!r)return;
+  const hit=resetUser(r);
+  if(!hit){showToast('No account matches this email.','danger');return;}
+  setPwId=id;
+  $('setpw-who').textContent=((hit.u.firstName||'')+' '+(hit.u.lastName||'')).trim()+' \u2014 '+(r.email||'');
+  $('setpw-val').value='';
+  $('setpw-err').textContent='';
+  $('m-setpw').classList.add('on');
+}
+
+function closeSetPw(){
+  $('m-setpw').classList.remove('on');
+  setPwId=null;
+}
+
+async function confirmSetPw(){
+  const id=setPwId;
+  if(!id||busy)return;
+  const r=allResets[id];
+  if(!r)return;
+  const hit=resetUser(r);
+  const err=$('setpw-err');
+  if(!hit){err.textContent='No account matches this email.';return;}
+  const pw=$('setpw-val').value||'';
+  const msg=validateUserPassword(pw);
+  if(msg){err.textContent=msg;return;}
+  busy=true;
+  $('setpw-btn').disabled=true;
+  try{
+    await db.ref('casino_users/'+hit.key).update({passwordPlain:pw});
+    hit.u.passwordPlain=pw;
+    const patch={status:'changed',changedAt:new Date().toISOString()};
+    await db.ref('password_resets/'+id).update(patch);
+    Object.assign(allResets[id],patch);
+    closeSetPw();
+    resetFilter='changed';
+    renderResets();
+    showToast('Password updated.');
+  }catch(e){
+    console.error('[setpw]',e);
+    err.textContent='Could not save. Please try again.';
+  }finally{
+    busy=false;
+    $('setpw-btn').disabled=false;
+  }
+}
+
+function onLockSearch(){
+  const q=($('lock-search').value||'').trim().toLowerCase();
+  const entries=Object.entries(allUsers);
+  const unlocked=entries.filter(([,u])=>!u.locked);
+  const locked=entries.filter(([,u])=>!!u.locked);
+
+  $('lock-filter-bar').innerHTML=
+    '<button class="filter-btn'+(lockFilter==='unlocked'?' on':'')+'" data-act="lockFilter" data-arg="unlocked">Unlocked <span class="filter-cnt">('+unlocked.length+')</span></button>'
+   +'<button class="filter-btn'+(lockFilter==='locked'?' on':'')+'" data-act="lockFilter" data-arg="locked">Locked <span class="filter-cnt">('+locked.length+')</span></button>';
+
+  let pool=lockFilter==='unlocked'?unlocked:locked;
+  if(q)pool=pool.filter(([,u])=>userMatches(u,q));
+
+  const out=$('lock-results');
+  if(!pool.length){out.innerHTML='<div class="empty-msg">No users found.</div>';return;}
+  out.innerHTML=pool.map(([k,u])=>{
+    const btn=u.locked
+      ?'<button class="lock-btn unlock" data-act="unlock" data-arg="'+esc(k)+'">Unlock Account</button>'
+      :'<button class="lock-btn danger" data-act="openLockModal" data-arg="'+esc(k)+'">Lock Account</button>';
+    return '<div class="lock-card">'
+      +'<div class="user-nm">'+esc(((u.firstName||'')+' '+(u.lastName||'')).trim())+'</div>'
+      +'<div class="user-em">'+esc(u.email||'')+'</div>'
+      +'<div class="lock-btns">'+btn+'</div></div>';
+  }).join('');
+}
+
+function openLockModal(key){
+  lockTargetKey=key;
+  $('lock-msg').value='';
+  $('lock-modal-bg').classList.add('on');
+}
+
+function closeLockModal(){
+  $('lock-modal-bg').classList.remove('on');
+  lockTargetKey=null;
+}
+
+async function confirmLock(){
+  if(!lockTargetKey)return;
+  const key=lockTargetKey;
+  const msg=($('lock-msg').value||'').trim()||'Your account has been locked.';
+  try{
+    await db.ref('casino_users/'+key).update({locked:true,lockMessage:msg});
+    if(allUsers[key]){allUsers[key].locked=true;allUsers[key].lockMessage=msg;}
+    closeLockModal();
+    onLockSearch();
+    showToast('Account locked.');
+  }catch(e){
+    console.error('[lock]',e);
+    showToast('Failed.','danger');
+  }
+}
+
+async function doUnlock(key){
+  const ok=await showConfirm('Unlock this account?','Unlock','ok');
+  if(!ok)return;
+  try{
+    await db.ref('casino_users/'+key).update({locked:false});
+    await db.ref('casino_users/'+key+'/lockMessage').remove();
+    if(allUsers[key]){allUsers[key].locked=false;delete allUsers[key].lockMessage;}
+    onLockSearch();
+    showToast('Account unlocked.');
+  }catch(e){
+    console.error('[unlock]',e);
+    showToast('Failed.','danger');
+  }
+}
+
+async function toggleSupportLock(){
+  try{
+    const snap=await db.ref('support_config/locked').get();
+    const next=!(snap.exists()&&snap.val()===true);
+    await db.ref('support_config/locked').set(next);
+    updateSupLockUI(next);
+    showToast(next?'Support locked.':'Support unlocked.');
+  }catch(e){
+    console.error('[supLock]',e);
+    showToast('Failed.','danger');
+  }
+}
+
+function updateSupLockUI(locked){
+  const btn=$('sup-lock-btn');
+  btn.className='main-btn '+(locked?'shut':'open');
+  $('sup-lock-icon').className=locked?'fas fa-lock':'fas fa-lock-open';
+  $('sup-lock-text').textContent=locked?'Support Locked':'Support Open';
+}
+
+function newAgentCode(){
+  let code='';
+  for(let i=0;i<8;i++)code+=String.fromCharCode(65+Math.floor(Math.random()*26));
+  return code+Math.floor(1000+Math.random()*9000);
+}
+
+async function generateSupCode(){
+  const username=($('sup-agent-username').value||'').trim();
+  if(!username){showToast('Enter username.','danger');return;}
+  if(!/^[A-Za-z0-9_]{3,20}$/.test(username)){
+    showToast('Username: 3-20 letters, digits or underscore.','danger');return;
+  }
+  try{
+    const exists=await db.ref('support_agents/'+username).get();
+    if(exists.exists()){showToast('Username already exists.','danger');return;}
+    await db.ref('support_agents/'+username).set({
+      username:username,
+      code:newAgentCode(),
+      codeUsed:false,
+      createdAt:Date.now(),
+      codeGenCount:1,
+      totalMessages:0,
+      totalTime:0,
+      totalEdits:0,
+      totalDeletes:0
+    });
+    $('sup-agent-username').value='';
+    loadSupCodes();
+    showToast('Agent created.');
+  }catch(e){
+    console.error('[genCode]',e);
+    showToast('Failed.','danger');
+  }
+}
+
+async function loadSupCodes(){
+  const list=$('sup-codes-list');
+  try{
+    const snap=await db.ref('support_agents').get();
+    if(!snap.exists()){list.innerHTML='<div class="empty-msg">No agents yet.</div>';return;}
+    const agents=snap.val()||{};
+    list.innerHTML=Object.entries(agents).map(([key,a])=>
+      '<div class="agent-card">'
+      +'<div class="ud-row"><span class="ud-row-lbl">Username</span><span class="ud-row-val">'+esc(a.username||key)+'</span></div>'
+      +'<div class="ud-row"><span class="ud-row-lbl">Code</span>'
+        +'<span class="ud-row-val agent-code'+(a.codeUsed?' used':'')+'">'+esc(a.code||DASH)+'</span>'
+        +'<button class="ud-edit-btn" data-act="regenCode" data-arg="'+esc(key)+'"><i class="fas fa-rotate"></i></button></div>'
+      +'<div class="ud-row"><span class="ud-row-lbl">Statistics</span><span class="ud-row-val"></span>'
+        +'<button class="ud-edit-btn" data-act="agentStats" data-arg="'+esc(key)+'"><i class="fas fa-question"></i></button></div>'
+      +'<div class="ud-row"><span class="ud-row-lbl">Remove</span><span class="ud-row-val"></span>'
+        +'<button class="ud-delete-btn" data-act="deleteAgent" data-arg="'+esc(key)+'"><i class="fas fa-trash"></i></button></div>'
+      +'</div>').join('');
+  }catch(e){
+    console.error('[supCodes]',e);
+    list.innerHTML='<div class="empty-msg">Failed to load agents.</div>';
+  }
+}
+
+async function regenCode(key){
+  try{
+    const snap=await db.ref('support_agents/'+key).get();
+    if(!snap.exists()){showToast('Agent not found.','danger');return;}
+    const a=snap.val()||{};
+    await db.ref('support_agents/'+key).update({
+      code:newAgentCode(),
+      codeUsed:false,
+      codeGenCount:(parseInt(a.codeGenCount)||0)+1
+    });
+    loadSupCodes();
+    showToast('New code generated.');
+  }catch(e){
+    console.error('[regen]',e);
+    showToast('Failed.','danger');
+  }
+}
+
+async function deleteAgent(key){
+  const ok=await showConfirm('Remove agent '+key+'?','Remove','danger');
+  if(!ok)return;
+  try{
+    await db.ref('support_agents/'+key).remove();
+    loadSupCodes();
+    showToast('Agent removed.');
+  }catch(e){
+    console.error('[delAgent]',e);
+    showToast('Failed.','danger');
+  }
+}
+
+async function showAgentStats(key){
+  try{
+    const snap=await db.ref('support_agents/'+key).get();
+    if(!snap.exists()){showToast('Agent not found.','danger');return;}
+    const a=snap.val()||{};
+    const today=new Date().toDateString();
+    const daily=(a.dailyTime&&a.dailyTime.date===today)?a.dailyTime.ms:0;
+    const created=a.createdAt?new Date(a.createdAt):new Date();
+    const dateStr=String(created.getDate()).padStart(2,'0')+'.'
+      +String(created.getMonth()+1).padStart(2,'0')+'.'+created.getFullYear();
+    const name=a.username||key;
+    let unanswered=0;
+    const chats=await db.ref('support_chats').get();
+    if(chats.exists()){
+      const all=chats.val()||{};
+      for(const k in all){
+        const c=all[k];
+        if(c&&c.takenBy===name&&c.lastMsg&&c.lastMsg.from==='user')unanswered++;
+      }
+    }
+    const cell=(lbl,val)=>'<div class="stats-cell"><div class="stats-cell-lbl">'+lbl+'</div><div class="stats-cell-val">'+val+'</div></div>';
+    $('stats-modal-box').innerHTML=
+      '<div class="stats-head">'
+        +'<button class="ud-edit-btn" data-act="closeStats"><i class="fas fa-times"></i></button>'
+        +'<div class="stats-date">'+dateStr+'</div></div>'
+      +'<div class="stats-grid">'
+        +cell('Generated codes',parseInt(a.codeGenCount)||1)
+        +cell('Unanswered',unanswered)
+        +cell('Messages sent',parseInt(a.totalMessages)||0)
+        +cell('Messages edited',parseInt(a.totalEdits)||0)
+        +cell('Messages deleted',parseInt(a.totalDeletes)||0)
+        +cell('Time today',fmtMins(daily))
+        +cell('Time total',fmtMins(a.totalTime))
+      +'</div>';
+    $('stats-modal-bg').classList.add('on');
+  }catch(e){
+    console.error('[agentStats]',e);
+    showToast('Failed.','danger');
+  }
+}
+
+function closeStatsModal(){$('stats-modal-bg').classList.remove('on');}
+
+function kycName(u){
+  const k=u.kyc||{};
+  return ((k.firstName||'')+' '+(k.lastName||'')).trim()
+    ||((u.firstName||'')+' '+(u.lastName||'')).trim();
+}
+
+function renderKycList(){
+  const q=($('kyc-search').value||'').trim().toLowerCase();
+  const entries=Object.entries(allUsers);
+  const pools={
+    pending:entries.filter(([,u])=>u.kycStatus==='pending'&&u.kyc),
+    approved:entries.filter(([,u])=>u.kycStatus==='approved'),
+    rejected:entries.filter(([,u])=>u.kycStatus==='rejected')
+  };
+
+  $('kyc-filter-bar').innerHTML=Object.keys(pools).map(f=>
+    '<button class="filter-btn'+(kycTab===f?' on':'')+'" data-act="kycTab" data-arg="'+f+'">'
+    +f.charAt(0).toUpperCase()+f.slice(1)+' <span class="filter-cnt">('+pools[f].length+')</span></button>').join('');
+
+  let pool=pools[kycTab]||[];
+  if(q)pool=pool.filter(([,u])=>
+    (kycName(u)+' '+(u.username||'')+' '+(u.email||'')+' '+(u.inviteCode||'')).toLowerCase().includes(q));
+
+  const list=$('kyc-list');
+  if(!pool.length){list.innerHTML='<div class="empty-msg">No users.</div>';return;}
+  list.innerHTML=pool.map(([k,u])=>
+    '<div class="user-row" data-act="openKyc" data-arg="'+esc(k)+'">'
+    +'<div class="user-nm">'+(esc(kycName(u))||DASH)+'</div>'
+    +'<div class="user-em">'+esc(u.email||'')+'</div></div>').join('');
+}
+
+function openKycDetail(key){
+  const u=allUsers[key];
+  if(!u||!u.kyc)return;
+  const k=u.kyc;
+  currentDetailKey=key;
+  const fullName=esc([k.firstName,k.middleName,k.lastName].filter(Boolean).join(' '))||DASH;
+  const selfies=(k.selfies||[]).map(safeUrl).filter(Boolean);
+  const selfiesHtml=selfies.length
+    ?'<div class="kyc-selfies">'+selfies.map(s=>
+      '<img class="kyc-selfies-img" src="'+esc(s)+'" alt="" data-act="lightbox" data-arg="'+esc(s)+'">').join('')+'</div>'
+    :'';
+  const doc=safeUrl(k.docFront);
+  const docHtml=doc?'<img class="kyc-img" src="'+esc(doc)+'" alt="" data-act="lightbox" data-arg="'+esc(doc)+'">':'';
+  const actions=u.kycStatus==='pending'
+    ?'<div class="kyc-actions">'
+      +'<button class="kyc-approve-btn" data-act="approveKyc" data-arg="'+esc(key)+'">Approve</button>'
+      +'<button class="kyc-reject-btn" data-act="rejectKyc" data-arg="'+esc(key)+'">Reject</button></div>'
+    :'<div class="kyc-status-note">Status: '+esc(u.kycStatus||DASH)+'</div>';
+
+  $('sec-kyc-detail-body').innerHTML=
+    '<div class="kyc-info-card">'
+      +'<div class="kyc-info-row"><span class="kyc-info-lbl">Full name</span><span class="kyc-info-val">'+fullName+'</span></div>'
+      +'<div class="kyc-info-row"><span class="kyc-info-lbl">Email</span><span class="kyc-info-val">'+esc(u.email||DASH)+'</span></div>'
+      +'<div class="kyc-info-row"><span class="kyc-info-lbl">Date of birth</span><span class="kyc-info-val">'+esc(k.dob||DASH)+'</span></div>'
+      +'<div class="kyc-info-row"><span class="kyc-info-lbl">Document</span><span class="kyc-info-val">'+esc(DOC_NAMES[k.docType]||k.docType||DASH)+'</span></div>'
+    +'</div>'+selfiesHtml+docHtml+actions;
+  openSection('kyc-detail');
+}
+
+async function setKycStatus(key,status,label,cls){
+  if(busy)return;
+  const ok=await showConfirm(label,status==='approved'?'Approve':'Reject',cls);
+  if(!ok)return;
+  busy=true;
+  try{
+    const snap=await db.ref('casino_users/'+key+'/kycStatus').get();
+    const current=snap.exists()?snap.val():'';
+    if(current!=='pending'){showToast('Already '+(current||'unset')+'.','danger');return;}
+    await db.ref('casino_users/'+key+'/kycStatus').set(status);
+    if(allUsers[key])allUsers[key].kycStatus=status;
+    showToast('KYC '+status+'.');
+    openSection('kyc');
+  }catch(e){
+    console.error('[kyc]',e);
+    showToast('Failed.','danger');
+  }finally{
+    busy=false;
+  }
+}
+
+const approveKyc=key=>setKycStatus(key,'approved','Approve KYC for this user?','ok');
+const rejectKyc=key=>setKycStatus(key,'rejected','Reject KYC? The user must redo it.','danger');
+
+function openLightbox(src){
+  const url=safeUrl(src);
+  if(!url)return;
+  $('lb-img').src=url;
+  $('lightbox').classList.add('on');
+  lbScale=1;lbX=0;lbY=0;
+  applyLbTransform();
+}
+
+function closeLightbox(){
+  $('lightbox').classList.remove('on');
+  $('lb-img').src='';
+}
+
+function applyLbTransform(){
+  $('lb-img').style.transform='scale('+lbScale+') translate('+(lbX/lbScale)+'px,'+(lbY/lbScale)+'px)';
+}
+
+function lbPoints(e){return Array.from(e.touches).map(t=>({x:t.clientX,y:t.clientY}));}
+function lbDist(p){return Math.hypot(p[1].x-p[0].x,p[1].y-p[0].y);}
+
+function initLightbox(){
+  const close=$('lb-close');
+  const box=$('lb-container');
+  close.addEventListener('click',e=>{e.stopPropagation();closeLightbox();});
+  close.addEventListener('touchend',e=>{e.stopPropagation();e.preventDefault();closeLightbox();},{passive:false});
+
+  box.addEventListener('touchstart',e=>{
+    const p=lbPoints(e);
+    if(p.length===1){lbDragging=true;lbDragStart={x:p[0].x-lbX,y:p[0].y-lbY};}
+    else if(p.length===2){lbDragging=false;lbLastDist=lbDist(p)||1;}
+    e.preventDefault();
+  },{passive:false});
+
+  box.addEventListener('touchmove',e=>{
+    const p=lbPoints(e);
+    if(p.length===2){
+      const d=lbDist(p);
+      if(lbLastDist>0&&d>0){
+        lbScale=Math.min(8,Math.max(1,lbScale*(d/lbLastDist)));
+        lbLastDist=d;
+        if(lbScale<=1){lbX=0;lbY=0;}
+        applyLbTransform();
+      }
+    }else if(p.length===1&&lbDragging&&lbScale>1){
+      lbX=p[0].x-lbDragStart.x;
+      lbY=p[0].y-lbDragStart.y;
+      applyLbTransform();
+    }
+    e.preventDefault();
+  },{passive:false});
+
+  box.addEventListener('touchend',e=>{
+    const now=Date.now();
+    if(now-lbLastTap<300&&e.changedTouches.length===1){
+      lbScale=1;lbX=0;lbY=0;applyLbTransform();
+    }
+    lbLastTap=now;
+    if(e.touches.length===0){
+      lbDragging=false;
+      if(lbScale<1.05){lbScale=1;lbX=0;lbY=0;applyLbTransform();}
+    }else if(e.touches.length===1){
+      lbDragging=true;
+      lbDragStart={x:e.touches[0].clientX-lbX,y:e.touches[0].clientY-lbY};
+    }
+  });
+
+  box.addEventListener('click',e=>{
+    if(e.target===box&&lbScale<=1)closeLightbox();
+  });
+}
+
+function askWipePhrase(){
+  return new Promise(resolve=>{
+    if(confirmResolve){confirmResolve(false);confirmResolve=null;}
+    confirmResolve=resolve;
+    $('confirm-modal-msg').textContent='This will permanently erase ALL users, deposits, withdrawals, password resets, support chats and agents.\n\nType ERASE below to confirm.';
+    const inp=$('wipe-confirm-in');
+    inp.value='';
+    inp.style.display='';
+    const okBtn=$('confirm-modal-ok');
+    okBtn.textContent='Erase everything';
+    okBtn.className='modal-btn danger';
+    okBtn.onclick=()=>{
+      if((inp.value||'').trim().toUpperCase()!=='ERASE'){
+        showToast('Type ERASE to confirm.','danger');
+        return;
+      }
+      closeConfirm();
+      resolve(true);
+    };
+    $('confirm-modal-cancel').onclick=()=>{closeConfirm();resolve(false);};
+    $('confirm-modal-bg').classList.add('on');
+    setTimeout(()=>inp.focus(),80);
+  });
+}
+
+async function wipeDatabase(){
+  if(busy)return;
+  if(!await askWipePhrase())return;
+  busy=true;
+  showToast('Erasing\u2026');
+  const failed=[];
+  try{
+    for(const t of WIPE_TABLES){
+      try{
+        await db.wipe(t);
+      }catch(e){console.error('[wipe]',t,e);failed.push(t);}
+    }
+    if(failed.length){showToast('Failed: '+failed.join(', '),'danger');return;}
+    allUsers={};allWdRequests={};allDepRequests={};allResets={};
+    currentDetailKey=null;currentDetailUser=null;
+    closeSection();
+    renderInfo();
+    showToast('Database erased.');
+  }finally{
+    busy=false;
+  }
+}
+
+const ACTIONS={
+  togglePw:togglePw,
+  login:adminLogin,
+  section:openSection,
+  closeSection:closeSection,
+  showDetail:showDetail,
+  editField:editField,
+  deleteUser:deleteCurrentUser,
+  addDeposit:addUserDeposit,
+  userFilter:v=>{userFilter=v;filterUsers();},
+  wdFilter:v=>{wdFilter=v;renderWd();},
+  resetFilter:v=>{resetFilter=v;renderResets();},
+  lockFilter:v=>{lockFilter=v;onLockSearch();},
+  kycTab:v=>{kycTab=v;renderKycList();},
+  approveWd:approveWd,
+  rejectWd:rejectWd,
+  copyAddr:copyAddr,
+  closeWdUserModal:closeWdUserModal,
+  openSetPw:openSetPw,
+  deleteReset:deleteReset,
+  closeSetPw:closeSetPw,
+  confirmSetPw:confirmSetPw,
+  openLockModal:openLockModal,
+  closeLockModal:closeLockModal,
+  confirmLock:confirmLock,
+  unlock:doUnlock,
+  toggleSupportLock:toggleSupportLock,
+  generateSupCode:generateSupCode,
+  regenCode:regenCode,
+  deleteAgent:deleteAgent,
+  agentStats:showAgentStats,
+  closeStats:closeStatsModal,
+  openKyc:openKycDetail,
+  approveKyc:approveKyc,
+  rejectKyc:rejectKyc,
+  lightbox:openLightbox,
+  closeEditModal:closeEditModal,
+  saveEditModal:saveEditModal,
+  wipe:wipeDatabase
+};
+
+document.addEventListener('click',ev=>{
+  const el=ev.target.closest('[data-act]');
+  if(!el)return;
+  const fn=ACTIONS[el.getAttribute('data-act')];
+  if(fn)fn(el.getAttribute('data-arg')||'',el,ev);
+});
+
+$('adm-pw').addEventListener('keydown',e=>{if(e.key==='Enter')adminLogin();});
+$('user-search').addEventListener('input',filterUsers);
+$('lock-search').addEventListener('input',onLockSearch);
+$('kyc-search').addEventListener('input',renderKycList);
+$('wd-search').addEventListener('keydown',e=>{if(e.key==='Enter')wdSearchSubmit();});
+$('pct-custom').addEventListener('input',pctCustom);
+$('setpw-val').addEventListener('input',()=>{$('setpw-err').textContent='';});
+$('edit-modal-in').addEventListener('keydown',e=>{
+  if(e.key==='Enter')saveEditModal();
+  else if(e.key==='Escape')closeEditModal();
+});
+
+initLightbox();
+$('adm-pw').focus();
+</script>
+</body>
+</html>
